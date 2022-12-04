@@ -94,6 +94,8 @@ python3 src/encoder.py \
 
 ## Requirements
 Activate your preferred virtual envrionment and then run `pip install -r requirements.txt`. You may need alternative commands to install CUDA 11 correctly; see PyTorch's official website for the latest instructions. If you want to replicate our exact results, you may need to use
+
+Python 3.9!
 ```
 torch==1.10.1+cu113
 transformers==4.15.0
