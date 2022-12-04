@@ -28,7 +28,7 @@ parser.add_argument('--fully-train', action='store_true')
 parser.add_argument('-tb', '--train-batch-size', type=int, default=8)
 parser.add_argument('-eb', '--eval-batch-size', type=int, default=16)  # 64 max
 parser.add_argument('-ga', '--grad-accumulation', type=int, default=1)
-parser.add_argument('-ega', '--eval_accumulation_steps', type=int, default=16)
+parser.add_argument('-ega', '--eval-grad-accumulation', type=int, default=16)
 parser.add_argument('-fe', '--fixed-num-evals', type=int, default=0)
 parser.add_argument('-ms', '--max-steps', type=int, default=-1)
 parser.add_argument('-lr', '--learning-rate', type=float, default=1e-4)
@@ -239,7 +239,7 @@ def arrange_training(
         per_device_train_batch_size=adjusted_train_batch_size,
         per_device_eval_batch_size=args.eval_batch_size,
         gradient_accumulation_steps=args.grad_accumulation,
-        eval_accumulation_steps=args.eval_accumulation_steps, # Avoid OOM in eval loop
+        eval_accumulation_steps=args.eval_grad_accumulation, # Avoid OOM in eval loop
         num_train_epochs=epochs,
         max_steps=args.max_steps,
         # predict_with_generate=True,
