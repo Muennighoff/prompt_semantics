@@ -2,7 +2,7 @@ import csv
 import argparse
 import random
 from pathlib import Path
-from typing import DefaultDict, Union, Optional, List
+from typing import DefaultDict, Union, Optional, List, Dict
 
 import torch
 import transformers as hf
@@ -236,7 +236,7 @@ def main() -> None:
             k_shot_proc_train = proc_train.select(sample_indices)
 
             model = hf.AutoModelForSequenceClassification.from_pretrained(brand)
-            setup_info: dict[str, Union[str, int, float]] = {
+            setup_info: Dict[str, Union[str, int, float]] = {
                 'brand': brand,
                 # 'm. param.': f'{model.num_parameters() / 1_000_000:.0f}',
                 'template': 'FT',

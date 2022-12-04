@@ -3,7 +3,7 @@ import argparse
 import random
 import gc
 from pathlib import Path
-from typing import DefaultDict, Union, Optional, Any, List
+from typing import DefaultDict, Union, Optional, Any, List, Dict
 
 import torch
 import transformers as hf
@@ -81,7 +81,7 @@ class NLIPrompt:
             self.template += ' {mask}'
 
         LM_targets = self.targets.rstrip().split(';')
-        self.class_id_to_word: dict[int, str]
+        self.class_id_to_word: Dict[int, str]
         if dataset in ('anli', 'mnli', 'cb'):
             self.ternary = True
             try:
@@ -109,7 +109,7 @@ class NLIPrompt:
 
     def check_conflicting_targets(self, tokenizer: hf.AutoTokenizer) -> bool:
         """assume the tokenizer is unchanged throughout this script"""
-        self.class_id_to_word_id: dict[int, int] = {}
+        self.class_id_to_word_id: Dict[int, int] = {}
         possible_duplicates = set()
         for class_id, word in self.class_id_to_word.items():
             token_id = tokenizer.encode(word, add_special_tokens=False)
@@ -131,7 +131,7 @@ class NLIPrompt:
 
 class PromptDataCollator(hf.DataCollatorForLanguageModeling):
 
-    def __call__(self, examples: List[dict[str, Any]]) -> dict[str, torch.Tensor]:
+    def __call__(self, examples: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
         target_word_ids = torch.tensor(
             [self.class_id_to_word_id[e['label']] for e in examples])
         batch = self.tokenizer.pad(
@@ -246,7 +246,7 @@ def arrange_training(
         train_set: hfd.Dataset,
         dev_set: hfd.Dataset,
         diagnostic_set: hfd.Dataset,
-        ) -> List[dict]:
+        ) -> List[Dict]:
     if len(train_set) <= args.train_batch_size:
         adjusted_train_batch_size = len(train_set)  # a batch has the entire train set
         eval_strategy = 'epoch'
@@ -412,7 +412,7 @@ def main() -> None:
             k_shot_proc_train = train_set.select(sample_indices).map(prompt_and_tokenize)
 
             model = hf.AutoModelForMaskedLM.from_pretrained(args.model_name)
-            setup_info: dict[str, Union[str, int, float]] = {
+            setup_info: Dict[str, Union[str, int, float]] = {
                 'dataset': args.dataset,
                 'brand': args.model_name,
                 # 'm. param.': f'{model.num_parameters() / 1_000_000:.0f}',

@@ -4,7 +4,7 @@ import random
 import logging
 import gc
 from pathlib import Path
-from typing import DefaultDict, Union, Optional, List
+from typing import DefaultDict, Union, Optional, List, Dict
 
 import transformers as hf
 import datasets as hfd
@@ -109,7 +109,7 @@ class NLIPrompt:
                 self.template += ' {mask}'
 
         LM_targets = self.targets.rstrip().split(';')
-        self.class_id_to_word: dict[int, str]
+        self.class_id_to_word: Dict[int, str]
         if dataset in ('anli', 'mnli', 'cb'):
             self.ternary = True
             assert len(LM_targets) == 3
@@ -134,7 +134,7 @@ class NLIPrompt:
 
     def check_conflicting_targets(self, tokenizer: hf.AutoTokenizer) -> bool:
         """assume the tokenizer is unchanged throughout this script"""
-        self.class_id_to_word_id: dict[int, int] = {}
+        self.class_id_to_word_id: Dict[int, int] = {}
         possible_duplicates = set()
         for class_id, word in self.class_id_to_word.items():
             token_id = tokenizer.encode(word, add_special_tokens=False)
@@ -425,7 +425,7 @@ def main() -> None:
                 k_shot_proc_train = train_set.select(sample_indices).map(
                     prompt_and_tokenize, remove_columns='label', )
 
-            setup_info: dict[str, Union[str, int, float]] = {
+            setup_info: Dict[str, Union[str, int, float]] = {
                 'dataset': args.dataset,
                 'brand': args.brand,
                 # 'm. param.': f'{model.num_parameters() / 1_000_000:.0f}',
