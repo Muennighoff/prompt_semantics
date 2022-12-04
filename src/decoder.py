@@ -237,8 +237,8 @@ def arrange_training(
             logits = preds[0]  # [1] is probably final state
         else:
             logits = preds
-        # Target is the final token
-        logits = logits[:, -1, :]  # batch * seq * vocab
+        # logits for the target are one before the final token
+        logits = logits[:, -2, :]  # batch * seq * vocab
         pred_word_ids = logits.argmax(axis=-1)
         target_word_ids = targets[:, -1] # batch * seq
         naive_eval = accuracy.compute(predictions=pred_word_ids, references=target_word_ids)
