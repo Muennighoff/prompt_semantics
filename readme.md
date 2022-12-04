@@ -68,7 +68,7 @@ Add `--fully-train` if you want to train on the entire training set in addition 
 
 ### Zero-Shot Experiments
 ```
-python3 src/encoder_decoder \
+python3 src/encoder_decoder.py \
     --brand bigscience/T0 \
     --save-dir runs/zero-shot/  \
     --no-input-eos \
@@ -81,7 +81,7 @@ python3 src/encoder_decoder \
 
 ### Target Word Experiments (Section 5)
 ```
-python3 src/encoder.py.py \
+python3 src/encoder.py \
     --model-name albert-xxlarge-v2 \
     --dataset rte \
     --save-dir runs/sec5/ \
