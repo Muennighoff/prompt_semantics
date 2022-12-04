@@ -4,7 +4,7 @@ import random
 import logging
 import gc
 from pathlib import Path
-from typing import DefaultDict, Union, Optional
+from typing import DefaultDict, Union, Optional, List
 
 import transformers as hf
 import datasets as hfd
@@ -161,7 +161,7 @@ def arrange_training(
         train_set: Optional[hfd.Dataset],
         dev_set: hfd.Dataset,
         diagnostic_set: Optional[hfd.Dataset] = None,
-        ) -> list[dict]:
+        ) -> List[dict]:
     if train_set is None:  # zero-shot
         adjusted_train_batch_size = 0
         eval_strategy = 'epoch'
@@ -363,7 +363,7 @@ def main() -> None:
     writer.writeheader()
     # Load prompts
     tokenizer = hf.AutoTokenizer.from_pretrained(args.brand)
-    prompts: list[NLIPrompt] = []
+    prompts: List[NLIPrompt] = []
     with open(args.prompt_path) as p_file:
         reader = csv.DictReader(p_file)
         for row in reader:
@@ -414,7 +414,7 @@ def main() -> None:
             proc_diag = None
 
         for num_shots in tqdm(args.num_shots, desc='Num. Shots', disable=len(args.num_shots) == 1):
-            result_table: list[dict] = []
+            result_table: List[dict] = []
             if num_shots == 0:
                 k_shot_proc_train = None
                 start_index = None

@@ -2,7 +2,7 @@ import csv
 import argparse
 import random
 from pathlib import Path
-from typing import DefaultDict, Union, Optional
+from typing import DefaultDict, Union, Optional, List
 
 import torch
 import transformers as hf
@@ -59,7 +59,7 @@ class DiagnosticTrainer(hf.Trainer):
             dev_dataloader: torch.utils.data.DataLoader,
             description: str,
             prediction_loss_only: Optional[bool] = None,
-            ignore_keys: Optional[list[str]] = None,
+            ignore_keys: Optional[List[str]] = None,
             metric_key_prefix: str = "eval",
             ) -> hf.trainer_utils.EvalLoopOutput:
         # model = self._wrap_model(self.model, training=False)
@@ -124,7 +124,7 @@ def arrange_training(
         train_set: hfd.Dataset,
         dev_set: hfd.Dataset,
         diagnostic_set: hfd.Dataset,
-        ) -> list[dict]:
+        ) -> List[dict]:
     if train_set is None:  # zero-shot
         adjusted_train_batch_size = 0
         eval_strategy = 'epoch'
