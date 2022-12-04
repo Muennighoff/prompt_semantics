@@ -4,7 +4,7 @@ import random
 import logging
 import gc
 from pathlib import Path
-from typing import DefaultDict, Union, Optional, List, Dict
+from typing import DefaultDict, Union, Optional, List, Dict, Tuple
 
 import transformers as hf
 import datasets as hfd
@@ -189,7 +189,7 @@ def arrange_training(
     accuracy = hfd.load_metric('accuracy', keep_in_memory=True)
     label_word_ids = [wid for wid in prompt.class_id_to_word_id.values()]
 
-    def eval_with_generate(eval_preds: tuple[np.ndarray, np.ndarray]) -> dict:
+    def eval_with_generate(eval_preds: Tuple[np.ndarray, np.ndarray]) -> dict:
         preds, target_word_ids = eval_preds
         if isinstance(preds, tuple):
             logits = preds[0]  # [1] is probably final state
@@ -208,7 +208,7 @@ def arrange_training(
         }
         return result
 
-    def eval_sans_generate(eval_preds: tuple[np.ndarray, np.ndarray]) -> dict:
+    def eval_sans_generate(eval_preds: Tuple[np.ndarray, np.ndarray]) -> dict:
         preds, target_word_ids = eval_preds
         if isinstance(preds, tuple):
             logits = preds[0]  # [1] is probably final state
