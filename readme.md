@@ -41,10 +41,11 @@ python3 src/encoder.py \
     --seed 1,2,3,4
 ```
 
+For decoder-only models (e.g., BLOOMZ), run:
 ```
 python3 src/decoder.py \
     --brand bigscience/bloomz-560m \
-    --save-dir runs/RTE_T0/ \
+    --save-dir runs/RTE_B5/ \
     --dataset rte \
     --prompt-path data/binary_NLI_prompts.csv \
     --experiment-name 'sec4' \
