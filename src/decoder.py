@@ -28,6 +28,7 @@ parser.add_argument('--fully-train', action='store_true')
 parser.add_argument('-tb', '--train-batch-size', type=int, default=8)
 parser.add_argument('-eb', '--eval-batch-size', type=int, default=16)  # 64 max
 parser.add_argument('-ga', '--grad-accumulation', type=int, default=1)
+parser.add_argument('-ega', '--eval_accumulation_steps', type=int, default=16)
 parser.add_argument('-fe', '--fixed-num-evals', type=int, default=0)
 parser.add_argument('-ms', '--max-steps', type=int, default=-1)
 parser.add_argument('-lr', '--learning-rate', type=float, default=1e-4)
@@ -238,6 +239,7 @@ def arrange_training(
         per_device_train_batch_size=adjusted_train_batch_size,
         per_device_eval_batch_size=args.eval_batch_size,
         gradient_accumulation_steps=args.grad_accumulation,
+        eval_accumulation_steps=args.eval_accumulation_steps, # Avoid OOM in eval loop
         num_train_epochs=epochs,
         max_steps=args.max_steps,
         # predict_with_generate=True,
@@ -396,7 +398,7 @@ def main() -> None:
                 premise=example['premise'],
                 hypothesis=example['hypothesis'])
             filled_template += " " + prompt.class_id_to_word[example['label']]
-            model_input = tokenizer(filled_template, truncation=True, padding=True, max_length=512, add_special_tokens=not args.no_input_eos)
+            model_input = tokenizer(filled_template, truncation=True, padding=True, max_length=2048, add_special_tokens=not args.no_input_eos)
             #with tokenizer.as_target_tokenizer():
             #    target_word = prompt.class_id_to_word[example['label']]
             #    target_ids = tokenizer(target_word)['input_ids']
