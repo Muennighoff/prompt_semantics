@@ -3,7 +3,7 @@ import argparse
 import random
 import gc
 from pathlib import Path
-from typing import DefaultDict, Union, Optional, Any
+from typing import DefaultDict, Union, Optional, Any, List
 
 import torch
 import transformers as hf
@@ -131,7 +131,7 @@ class NLIPrompt:
 
 class PromptDataCollator(hf.DataCollatorForLanguageModeling):
 
-    def __call__(self, examples: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
+    def __call__(self, examples: List[dict[str, Any]]) -> dict[str, torch.Tensor]:
         target_word_ids = torch.tensor(
             [self.class_id_to_word_id[e['label']] for e in examples])
         batch = self.tokenizer.pad(
@@ -157,7 +157,7 @@ class PromptTrainer(hf.Trainer):
             dev_dataloader: torch.utils.data.DataLoader,
             description: str,
             prediction_loss_only: Optional[bool] = None,
-            ignore_keys: Optional[list[str]] = None,
+            ignore_keys: Optional[List[str]] = None,
             metric_key_prefix: str = "eval",
             ) -> hf.trainer_utils.EvalLoopOutput:
         # model = self._wrap_model(self.model, training=False)
@@ -246,7 +246,7 @@ def arrange_training(
         train_set: hfd.Dataset,
         dev_set: hfd.Dataset,
         diagnostic_set: hfd.Dataset,
-        ) -> list[dict]:
+        ) -> List[dict]:
     if len(train_set) <= args.train_batch_size:
         adjusted_train_batch_size = len(train_set)  # a batch has the entire train set
         eval_strategy = 'epoch'
@@ -357,7 +357,7 @@ def main() -> None:
     writer.writeheader()
 
     tokenizer = hf.AutoTokenizer.from_pretrained(args.model_name)
-    prompts: list[NLIPrompt] = []
+    prompts: List[NLIPrompt] = []
     with open(args.prompt_path) as p_file:
         reader = csv.DictReader(p_file)
         for row in reader:
@@ -405,7 +405,7 @@ def main() -> None:
             proc_diag = None
 
         for num_shots in tqdm(args.num_shots, desc='Num. Shots', disable=len(args.num_shots) == 1):
-            result_table: list[dict] = []
+            result_table: List[dict] = []
             max_index = len(train_set) - num_shots
             start_index = random.randint(0, max_index)
             sample_indices = range(start_index, start_index + num_shots)
