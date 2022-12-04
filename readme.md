@@ -41,6 +41,23 @@ python3 src/encoder.py \
     --seed 1,2,3,4
 ```
 
+```
+python3 src/decoder.py \
+    --brand bigscience/bloomz-560m \
+    --save-dir runs/RTE_T0/ \
+    --dataset rte \
+    --prompt-path data/binary_NLI_prompts.csv \
+    --experiment-name 'sec4' \
+    --num-shots 4,8,16,32,64,128,256 \
+    --epochs 30 \
+    --train-batch-size 4 \
+    --eval-batch-size 16 \
+    --grad-accumulation 4 \
+    --learning-rate 1e-4 \
+    --production \
+    --seed 1,2,3,4
+```
+
 If you just want to run a quick test of dependencies, etc.:
 ```
 python3 src/encoder.py \
