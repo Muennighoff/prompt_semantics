@@ -209,7 +209,7 @@ def arrange_training(
         }
         return result
 
-    def eval_sans_generate(eval_preds: tuple[np.ndarray, np.ndarray]) -> dict:
+    def eval_sans_generate_encdec(eval_preds: tuple[np.ndarray, np.ndarray]) -> dict:
         preds, target_word_ids = eval_preds
         if isinstance(preds, tuple):
             logits = preds[0]  # [1] is probably final state
@@ -230,6 +230,30 @@ def arrange_training(
             'rank_acc': round(rank_eval['accuracy'], 6),  # type: ignore
         }
         return result
+
+    def eval_sans_generate(eval_preds: tuple[np.ndarray, np.ndarray]) -> dict:
+        preds, targets = eval_preds
+        if isinstance(preds, tuple):
+            logits = preds[0]  # [1] is probably final state
+        else:
+            logits = preds
+        # Target is the final token
+        logits = logits[:, -1, :]  # batch * seq * vocab
+        pred_word_ids = logits.argmax(axis=-1)
+        target_word_ids = targets[:, -1] # batch * seq
+        naive_eval = accuracy.compute(predictions=pred_word_ids, references=target_word_ids)
+        
+        class_logits = logits[:, label_word_ids]  # (ent_id, neu_id, cont_id)
+        pred_class = class_logits.argmax(axis=-1)
+        int_class_ids = [prompt.word_id_to_class_id[wid] for wid in target_word_ids]
+        rank_eval = accuracy.compute(predictions=pred_class, references=int_class_ids)
+
+        result = {
+            'top1_acc': round(naive_eval['accuracy'], 6),  # type: ignore
+            'rank_acc': round(rank_eval['accuracy'], 6),  # type: ignore
+        }
+        return result
+
 
     train_args = hf.Seq2SeqTrainingArguments(
         output_dir=args.save_dir,
