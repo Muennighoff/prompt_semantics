@@ -68,7 +68,6 @@ else:
 if args.wandb_proj:
     import wandb
 
-hfd.set_progress_bar_enabled(False)
 if args.production:
     hf.logging.set_verbosity(50)
     hfd.logging.set_verbosity(50)
