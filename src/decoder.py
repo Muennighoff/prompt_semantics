@@ -395,15 +395,18 @@ def main() -> None:
             filled_template = prompt.template.format(
                 premise=example['premise'],
                 hypothesis=example['hypothesis'])
+            filled_template += " " + prompt.class_id_to_word[example['label']]
             model_input = tokenizer(filled_template, truncation=True, add_special_tokens=not args.no_input_eos)
-            with tokenizer.as_target_tokenizer():
-                target_word = prompt.class_id_to_word[example['label']]
-                target_ids = tokenizer(target_word)['input_ids']
-                target_ids = [
-                    tid if tid != tokenizer.pad_token_id else -100
-                    for tid in target_ids]
-                model_input['labels'] = target_ids
-                # del model_input['label']
+            #with tokenizer.as_target_tokenizer():
+            #    target_word = prompt.class_id_to_word[example['label']]
+            #    target_ids = tokenizer(target_word)['input_ids']
+            #    target_ids = [
+            #        tid if tid != tokenizer.pad_token_id else -100
+            #        for tid in target_ids]
+            #    model_input['labels'] = target_ids
+            #    # del model_input['label']
+            model_input['labels'] = model_input['input_ids']
+            # TODO: Set inputs to -100
             return model_input
 
         proc_dev = dev_set.map(prompt_and_tokenize, remove_columns='label')
